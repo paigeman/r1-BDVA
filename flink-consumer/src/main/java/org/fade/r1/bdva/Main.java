@@ -34,17 +34,17 @@ public class Main {
                 .setPartitions(partitionSet)
                 .setStartingOffsets(OffsetsInitializer.earliest())
                 .setDeserializer(KafkaRecordDeserializationSchema.valueOnly(StringDeserializer.class))
+                .setBounded(OffsetsInitializer.latest())
                 .build();
         // 本地执行
 //        StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
         try (StreamExecutionEnvironment env = StreamExecutionEnvironment.createRemoteEnvironment(properties.getProperty("flink.host"),
                 Integer.parseInt(properties.getProperty("flink.port")),
-//                "E:\\GitHub\\r1-BDVA\\flink-consumer\\target\\flink-consumer-1.0-SNAPSHOT.jar")) {
-                "D:\\apache-maven\\maven-repository\\org\\apache\\flink\\flink-connector-kafka\\3.4.0-1.20\\flink-connector-kafka-3.4.0-1.20.jar",
-                "D:\\apache-maven\\maven-repository\\org\\apache\\kafka\\kafka-clients\\3.4.0\\kafka-clients-3.4.0.jar")) {
+                "E:\\GitHub\\r1-BDVA\\flink-consumer\\target\\flink-consumer-1.0-SNAPSHOT.jar")) {
+//                "D:\\apache-maven\\maven-repository\\org\\apache\\flink\\flink-connector-kafka\\3.4.0-1.20\\flink-connector-kafka-3.4.0-1.20.jar",
+//                "D:\\apache-maven\\maven-repository\\org\\apache\\kafka\\kafka-clients\\3.4.0\\kafka-clients-3.4.0.jar")) {
 //        try {
             DataStreamSource<String> kafka = env.fromSource(source, WatermarkStrategy.noWatermarks(), "kafka");
-            // fixme
             SingleOutputStreamOperator<String> operator = kafka.map(String::toUpperCase);
             operator.print();
             env.execute();
