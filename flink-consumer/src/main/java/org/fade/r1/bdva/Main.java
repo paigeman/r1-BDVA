@@ -7,6 +7,7 @@ import org.apache.flink.connector.kafka.source.reader.deserializer.KafkaRecordDe
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
+import org.apache.flink.streaming.connectors.influxdb.sink.InfluxDBSink;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.serialization.StringDeserializer;
 
@@ -35,6 +36,14 @@ public class Main {
                 .setStartingOffsets(OffsetsInitializer.earliest())
                 .setDeserializer(KafkaRecordDeserializationSchema.valueOnly(StringDeserializer.class))
                 .setBounded(OffsetsInitializer.latest())
+                .build();
+        InfluxDBSink<Long> influxDBSink = InfluxDBSink.builder()
+                .setInfluxDBSchemaSerializer(new MySerializer())
+                .setInfluxDBUrl(properties.getProperty("influxdb2.host"))
+                .setInfluxDBUsername(properties.getProperty("influxdb2.username"))
+                .setInfluxDBPassword(properties.getProperty("influxdb2.password"))
+                .setInfluxDBBucket(properties.getProperty("influxdb2.bucket"))
+                .setInfluxDBOrganization(properties.getProperty("influxdb2.organization"))
                 .build();
         // 本地执行
 //        StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
