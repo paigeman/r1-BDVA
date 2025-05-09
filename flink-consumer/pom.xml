@@ -6,11 +6,11 @@
 
     <groupId>org.fade.r1.bdva</groupId>
     <artifactId>flink-consumer</artifactId>
-    <version>1.1.0</version>
+    <version>1.1.1</version>
 
     <properties>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -31,6 +31,12 @@
             <artifactId>flink-streaming-java</artifactId>
             <version>1.20.0</version>
             <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <artifactId>kryo</artifactId>
+                    <groupId>com.esotericsoftware.kryo</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.flink</groupId>
@@ -57,9 +63,14 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.apache.bahir</groupId>
-            <artifactId>flink-connector-influxdb2_2.12</artifactId>
-            <version>1.1.0</version>
+            <groupId>com.influxdb</groupId>
+            <artifactId>influxdb-client-java</artifactId>
+            <version>7.2.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.druid.extensions</groupId>
+            <artifactId>druid-influx-extensions</artifactId>
+            <version>0.13.0-incubating</version>
         </dependency>
     </dependencies>
 

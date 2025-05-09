@@ -37,25 +37,27 @@ public class Main {
                 .setDeserializer(KafkaRecordDeserializationSchema.valueOnly(StringDeserializer.class))
                 .setBounded(OffsetsInitializer.latest())
                 .build();
-        InfluxDBSink<Long> influxDBSink = InfluxDBSink.builder()
+        InfluxDBSink<String> influxDBSink = InfluxDBSink.builder()
                 .setInfluxDBSchemaSerializer(new MySerializer())
                 .setInfluxDBUrl(properties.getProperty("influxdb2.host"))
-                .setInfluxDBUsername(properties.getProperty("influxdb2.username"))
-                .setInfluxDBPassword(properties.getProperty("influxdb2.password"))
+//                .setInfluxDBUsername(properties.getProperty("influxdb2.username"))
+//                .setInfluxDBPassword(properties.getProperty("influxdb2.password"))
                 .setInfluxDBBucket(properties.getProperty("influxdb2.bucket"))
                 .setInfluxDBOrganization(properties.getProperty("influxdb2.organization"))
+                .setInfluxDBToken(properties.getProperty("influxdb2.token"))
                 .build();
         // 本地执行
 //        StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
         try (StreamExecutionEnvironment env = StreamExecutionEnvironment.createRemoteEnvironment(properties.getProperty("flink.host"),
                 Integer.parseInt(properties.getProperty("flink.port")),
-                "E:\\GitHub\\r1-BDVA\\flink-consumer\\target\\flink-consumer-1.0-SNAPSHOT.jar")) {
+                "E:\\GitHub\\r1-BDVA\\flink-consumer\\target\\flink-consumer-1.1.0.jar")) {
 //                "D:\\apache-maven\\maven-repository\\org\\apache\\flink\\flink-connector-kafka\\3.4.0-1.20\\flink-connector-kafka-3.4.0-1.20.jar",
 //                "D:\\apache-maven\\maven-repository\\org\\apache\\kafka\\kafka-clients\\3.4.0\\kafka-clients-3.4.0.jar")) {
 //        try {
             DataStreamSource<String> kafka = env.fromSource(source, WatermarkStrategy.noWatermarks(), "kafka");
             SingleOutputStreamOperator<String> operator = kafka.map(String::toUpperCase);
             operator.print();
+            operator.sinkTo(influxDBSink);
             env.execute();
         } catch (Exception e) {
             throw new RuntimeException(e);
