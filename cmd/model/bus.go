@@ -79,3 +79,13 @@ func (b *BusStatus) Move(r *rand.Rand) error {
 	b.Timestamp = now.UnixNano()
 	return nil
 }
+
+func (b *BusStatus) String() string {
+	return fmt.Sprintf("BusStatus [\n"+
+		"\tBusId: %s\n"+
+		"\tLatitude: %f\n"+
+		"\tLongitude: %f\n"+
+		"\tSpeed: %f\n"+
+		"\tTimestamp: %d\n"+
+		"]", b.BusID, b.Latitude, b.Longitude, b.Speed, b.Timestamp)
+}

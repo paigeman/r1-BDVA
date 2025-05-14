@@ -2,6 +2,8 @@ package main
 
 import (
 	"context"
+	"encoding/json"
+	"github.com/paigeman/r1-BDVA/cmd/model"
 	"github.com/segmentio/kafka-go"
 	"log"
 	"net"
@@ -43,7 +45,14 @@ func main() {
 			log.Println("Error reading:", err)
 			continue
 		}
-		log.Printf("Received from %s: %s\n", clientAddr, string(buffer[:n]))
+		/*不必要的代码*/
+		var busStatus model.BusStatus
+		if err := json.Unmarshal(buffer[:n], &busStatus); err != nil {
+			log.Println("Error unmarshalling:", err)
+			continue
+		}
+		log.Printf("Received from %s: %s\n", clientAddr, &busStatus)
+		/*不必要的代码*/
 		_, err = kafkaConn.WriteMessages(
 			kafka.Message{Value: buffer[:n]},
 		)

@@ -8,6 +8,7 @@ import (
 	"math/rand"
 	"net"
 	"sync"
+	"time"
 )
 
 func simulateBus(id string, wg *sync.WaitGroup) {
@@ -44,12 +45,15 @@ func simulateBus(id string, wg *sync.WaitGroup) {
 		data, err := json.Marshal(&busStatus)
 		if err != nil {
 			log.Println(id, ": Error marshalling busStatus:", err)
+			continue
 		}
 		_, err = conn.Write(data)
 		if err != nil {
 			log.Println(id, ": Error writing busStatus:", err)
+			continue
 		}
-		//time.Sleep()
+		// 必须要设置一定时间，不然会导致速度计算出来是Inf
+		time.Sleep(time.Second)
 		// 更新状态
 		err = busStatus.Move(r)
 		if err != nil {
