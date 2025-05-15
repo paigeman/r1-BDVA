@@ -113,7 +113,7 @@ case "$ACTION" in
     fi
 
     log "停止容器..."
-    docker-compose down "$@"
+    docker-compose down -v "$@"
     ;;
 
   *)

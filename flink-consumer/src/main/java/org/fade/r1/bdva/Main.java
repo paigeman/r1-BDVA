@@ -35,7 +35,7 @@ public class Main {
                 .setPartitions(partitionSet)
                 .setStartingOffsets(OffsetsInitializer.earliest())
                 .setDeserializer(KafkaRecordDeserializationSchema.valueOnly(StringDeserializer.class))
-                .setBounded(OffsetsInitializer.latest())
+//                .setBounded(OffsetsInitializer.latest())
                 .build();
         InfluxDBSink<String> influxDBSink = InfluxDBSink.builder()
                 .setInfluxDBSchemaSerializer(new MySerializer())
@@ -50,10 +50,12 @@ public class Main {
 //        StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
         try (StreamExecutionEnvironment env = StreamExecutionEnvironment.createRemoteEnvironment(properties.getProperty("flink.host"),
                 Integer.parseInt(properties.getProperty("flink.port")),
-                "E:\\GitHub\\r1-BDVA\\flink-consumer\\target\\flink-consumer-1.1.0.jar")) {
+                "E:\\GitHub\\r1-BDVA\\flink-consumer\\target\\flink-consumer-1.1.1.jar")) {
 //                "D:\\apache-maven\\maven-repository\\org\\apache\\flink\\flink-connector-kafka\\3.4.0-1.20\\flink-connector-kafka-3.4.0-1.20.jar",
 //                "D:\\apache-maven\\maven-repository\\org\\apache\\kafka\\kafka-clients\\3.4.0\\kafka-clients-3.4.0.jar")) {
 //        try {
+            // 与task slot有关
+            env.setParallelism(2);
             DataStreamSource<String> kafka = env.fromSource(source, WatermarkStrategy.noWatermarks(), "kafka");
             SingleOutputStreamOperator<String> operator = kafka.map(String::toUpperCase);
             operator.print();
