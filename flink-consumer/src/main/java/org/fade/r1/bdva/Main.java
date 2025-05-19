@@ -1,5 +1,6 @@
 package org.fade.r1.bdva;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.flink.api.common.eventtime.WatermarkStrategy;
 import org.apache.flink.connector.kafka.source.KafkaSource;
 import org.apache.flink.connector.kafka.source.enumerator.initializer.OffsetsInitializer;
@@ -37,7 +38,7 @@ public class Main {
                 .setDeserializer(KafkaRecordDeserializationSchema.valueOnly(StringDeserializer.class))
 //                .setBounded(OffsetsInitializer.latest())
                 .build();
-        InfluxDBSink<String> influxDBSink = InfluxDBSink.builder()
+        InfluxDBSink<BusStatus> influxDBSink = InfluxDBSink.builder()
                 .setInfluxDBSchemaSerializer(new MySerializer())
                 .setInfluxDBUrl(properties.getProperty("influxdb2.host"))
 //                .setInfluxDBUsername(properties.getProperty("influxdb2.username"))
@@ -50,15 +51,17 @@ public class Main {
 //        StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
         try (StreamExecutionEnvironment env = StreamExecutionEnvironment.createRemoteEnvironment(properties.getProperty("flink.host"),
                 Integer.parseInt(properties.getProperty("flink.port")),
-                "E:\\GitHub\\r1-BDVA\\flink-consumer\\target\\flink-consumer-1.1.1.jar")) {
+                "E:\\GitHub\\r1-BDVA\\flink-consumer\\target\\flink-consumer-1.1.2.jar")) {
 //                "D:\\apache-maven\\maven-repository\\org\\apache\\flink\\flink-connector-kafka\\3.4.0-1.20\\flink-connector-kafka-3.4.0-1.20.jar",
 //                "D:\\apache-maven\\maven-repository\\org\\apache\\kafka\\kafka-clients\\3.4.0\\kafka-clients-3.4.0.jar")) {
 //        try {
             // 与task slot有关
             env.setParallelism(2);
             DataStreamSource<String> kafka = env.fromSource(source, WatermarkStrategy.noWatermarks(), "kafka");
-            SingleOutputStreamOperator<String> operator = kafka.map(String::toUpperCase);
-            operator.print();
+            SingleOutputStreamOperator<BusStatus> operator = kafka.map(json -> {
+                ObjectMapper objectMapper = new ObjectMapper();
+                return objectMapper.readValue(json, BusStatus.class);
+            });
             operator.sinkTo(influxDBSink);
             env.execute();
         } catch (Exception e) {
