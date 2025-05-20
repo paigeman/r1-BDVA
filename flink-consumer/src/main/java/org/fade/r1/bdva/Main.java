@@ -51,7 +51,7 @@ public class Main {
 //        StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
         try (StreamExecutionEnvironment env = StreamExecutionEnvironment.createRemoteEnvironment(properties.getProperty("flink.host"),
                 Integer.parseInt(properties.getProperty("flink.port")),
-                "E:\\GitHub\\r1-BDVA\\flink-consumer\\target\\flink-consumer-1.1.2.jar")) {
+                "E:\\GitHub\\r1-BDVA\\flink-consumer\\target\\flink-consumer-1.1.3.jar")) {
 //                "D:\\apache-maven\\maven-repository\\org\\apache\\flink\\flink-connector-kafka\\3.4.0-1.20\\flink-connector-kafka-3.4.0-1.20.jar",
 //                "D:\\apache-maven\\maven-repository\\org\\apache\\kafka\\kafka-clients\\3.4.0\\kafka-clients-3.4.0.jar")) {
 //        try {
