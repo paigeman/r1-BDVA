@@ -13,6 +13,7 @@
 - Docker
 - WSL / Linux distro (已在 Kali Linux 中进行测试)
 - Go 1.22.5
+- Grafana 11.6.0
 
 ### 如何使用
 
@@ -21,6 +22,8 @@
 ```shell
 ./start.sh up
 ```
+
+把 `dashboard.json` 导入Grafana
 
 然后运行flink-consumer目录下的Main.java程序（可能需要更改jar文件的路径）
 

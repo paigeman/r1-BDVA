@@ -13,6 +13,7 @@ Final Project for the First-Year Master's Course "Big Data Visualization and Ana
 - Docker
 - WSL / Linux distro (tested on Kali Linux)
 - Go 1.22.5
+- Grafana 11.6.0
 
 ### Usage
 
@@ -21,6 +22,8 @@ First run the script:
 ```shell
 ./start.sh up
 ```
+
+Import the `dashboard.json` (file) into Grafana.
 
 Then run the Main.java program under the `flink-consumer` directory.(You may need to modify the path to the jar file.)
 
